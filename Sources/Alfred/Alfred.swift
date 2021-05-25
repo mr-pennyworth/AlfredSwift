@@ -15,8 +15,11 @@ class Alfred {
     orElse: "com.runningwithcrayons.Alfred"
   )
 
-  private static let appSupportDir: URL =
+  static let appSupportDir: URL =
     home/"Library"/"Application Support"/"Alfred"
+
+  static let cacheDir: URL =
+    home/"Library"/"Caches"/bundleID
 
   static let prefsDir: URL = {
     let prefsJsonPath = appSupportDir/"prefs.json"
@@ -28,8 +31,7 @@ class Alfred {
     return URL(fileURLWithPath: "/dev/null")
   }()
 
-  static let isInstalled: Bool =
-    fs.fileExists(atPath: appBundlePath.path)
+  static let isInstalled: Bool = fs.exists(appBundlePath)
 
   static let build: Int =
     Int(alfredPlist.get("CFBundleVersion", orElse: "0"))!
@@ -45,7 +47,4 @@ class Alfred {
   private static let minPressSecretaryBuild: Int = 1203
 
   static let hasPressSecretary: Bool = build >= minPressSecretaryBuild
-
-  init() {
-  }
 }

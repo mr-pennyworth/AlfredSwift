@@ -4,6 +4,30 @@ extension URL {
   static func /(parent: URL, child: String) -> URL {
     parent.appendingPathComponent(child)
   }
+
+  func subDirs() -> [URL] {
+    let fs = FileManager.default
+    guard hasDirectoryPath else {
+      log("Error: couldn't get contents of directory: \(path)")
+      return []
+    }
+    if let dirs = try? fs.contentsOfDirectory(
+      at: self,
+      includingPropertiesForKeys: nil,
+      options: [.skipsHiddenFiles]
+    ).filter(\.hasDirectoryPath) {
+      return dirs
+    } else {
+      log("Error: couldn't get contents of directory: \(path)")
+      return []
+    }
+  }
+}
+
+extension FileManager {
+  func exists(_ url: URL) -> Bool {
+    fileExists(atPath: url.path)
+  }
 }
 
 func log(
