@@ -1,0 +1,7 @@
+*~
+*.xcworkspace
+.idea
+DerivedData
+xcuserdata
+xcuserdata/
+.build
