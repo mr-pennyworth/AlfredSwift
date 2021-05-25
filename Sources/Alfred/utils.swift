@@ -13,8 +13,7 @@ extension URL {
     }
     if let dirs = try? fs.contentsOfDirectory(
       at: self,
-      includingPropertiesForKeys: nil,
-      options: [.skipsHiddenFiles]
+      includingPropertiesForKeys: nil
     ).filter(\.hasDirectoryPath) {
       return dirs
     } else {
