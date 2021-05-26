@@ -1,6 +1,6 @@
 import Foundation
 
-class Alfred {
+public class Alfred {
   private static let fs: FileManager = FileManager.default
   private static let home: URL = fs.homeDirectoryForCurrentUser
 
@@ -15,13 +15,13 @@ class Alfred {
     orElse: "com.runningwithcrayons.Alfred"
   )
 
-  static let appSupportDir: URL =
+  public static let appSupportDir: URL =
     home/"Library"/"Application Support"/"Alfred"
 
-  static let cacheDir: URL =
+  public static let cacheDir: URL =
     home/"Library"/"Caches"/bundleID
 
-  static let prefsDir: URL = {
+  public static let prefsDir: URL = {
     let prefsJsonPath = appSupportDir/"prefs.json"
     if let dict = jsonObj(contentsOf: prefsJsonPath) {
       if let dirPath = dict["current"] as? String {
@@ -31,7 +31,7 @@ class Alfred {
     return URL(fileURLWithPath: "/dev/null")
   }()
 
-  static let localPrefsDir: URL = {
+  public static let localPrefsDir: URL = {
     let localPrefsParent = Alfred.prefsDir/"preferences"/"local"
     if let localHash = envVarsAtInvocation?.prefsLocalHash {
       return localPrefsParent/localHash
@@ -48,12 +48,12 @@ class Alfred {
     return localPrefsDirs[0]
   }()
 
-  static let isInstalled: Bool = fs.exists(appBundlePath)
+  public static let isInstalled: Bool = fs.exists(appBundlePath)
 
-  static let build: Int =
+  public static let build: Int =
     Int(alfredPlist.get("CFBundleVersion", orElse: "0"))!
 
-  static let version: Semver = Semver(alfredPlist.get(
+  public static let version: Semver = Semver(alfredPlist.get(
     "CFBundleShortVersionString",
     orElse: "0.0.0"
   ))!
@@ -63,5 +63,5 @@ class Alfred {
   // reference: https://bit.ly/3hXHOXD
   private static let minPressSecretaryBuild: Int = 1203
 
-  static let hasPressSecretary: Bool = build >= minPressSecretaryBuild
+  public static let hasPressSecretary: Bool = build >= minPressSecretaryBuild
 }

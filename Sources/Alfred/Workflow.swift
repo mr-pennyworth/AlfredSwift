@@ -1,10 +1,10 @@
 import Foundation
 
-class Workflow {
-  let dir: URL!
-  let dataDir: URL!
-  let cacheDir: URL!
-  let name: String!
+public class Workflow {
+  public let dir: URL!
+  public let dataDir: URL!
+  public let cacheDir: URL!
+  public let name: String!
   private let plist: Plist!
 
   fileprivate init(
@@ -23,7 +23,7 @@ class Workflow {
   }
 }
 
-extension Alfred {
+public extension Alfred {
   private static let fs: FileManager = FileManager.default
 
   private static var id2wf: [String: Workflow] = {

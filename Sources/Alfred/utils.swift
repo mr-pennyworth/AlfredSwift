@@ -1,6 +1,6 @@
 import Foundation
 
-extension URL {
+public extension URL {
   static func /(parent: URL, child: String) -> URL {
     parent.appendingPathComponent(child)
   }
@@ -23,13 +23,13 @@ extension URL {
   }
 }
 
-extension FileManager {
+public extension FileManager {
   func exists(_ url: URL) -> Bool {
     fileExists(atPath: url.path)
   }
 }
 
-func log(
+public func log(
   _ message: String,
   filename: String = #file,
   function: String = #function,
@@ -39,7 +39,7 @@ func log(
   NSLog("[\(basename):\(line) \(function)] \(message)")
 }
 
-func jsonObj(contentsOf filepath: URL) -> [String: Any]? {
+public func jsonObj(contentsOf filepath: URL) -> [String: Any]? {
   do {
     let data = try Data(contentsOf: filepath)
     let parsedJson = try JSONSerialization.jsonObject(with: data)
@@ -76,7 +76,7 @@ func jsonObj(contentsOf filepath: URL) -> [String: Any]? {
 ///   - arraylessJsonObj: JSON object that's known to not have arrays
 ///   - keySeparator: string that joins keys at various levels
 /// - Returns: a single-level JSON object
-public func flattenJsonObj(
+func flattenJsonObj(
   arraylessJsonObj: [String: Any],
   keySeparator: String = "-"
 ) -> [String: Any] {

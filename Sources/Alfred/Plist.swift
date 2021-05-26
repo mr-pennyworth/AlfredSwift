@@ -1,9 +1,9 @@
 import Foundation
 
-class Plist {
+public class Plist {
   private var dict: [String: Any] = [String: Any]()
 
-  init(path: URL) {
+  public init(path: URL) {
     if let plist = NSDictionary(contentsOf: path) as? [String: Any] {
       dict = plist
     } else {
@@ -11,7 +11,7 @@ class Plist {
     }
   }
 
-  func get<T>(_ key: String) -> T? {
+  public func get<T>(_ key: String) -> T? {
     if let value = dict[key] as? T {
       return value
     } else {
@@ -19,7 +19,7 @@ class Plist {
     }
   }
 
-  func get<T>(_ key: String, orElse: T) -> T {
+  public func get<T>(_ key: String, orElse: T) -> T {
     if let value = dict[key] as? T {
       return value
     } else {

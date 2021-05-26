@@ -1,6 +1,6 @@
 import Foundation
 
-extension Alfred {
+public extension Alfred {
   private static let fs = FileManager.default
 
   static let themeID: String = {

@@ -1,6 +1,6 @@
 import Foundation
 
-extension Alfred {
+public extension Alfred {
   /// Values of Alfred-specific environment variables
   /// passed to the program when the program was started.
   /// Such values are passed only if the program was started
@@ -27,16 +27,25 @@ extension Alfred {
  [Reference documentation][1]
  [1]: https://www.alfredapp.com/help/workflows/script-environment-variables/
  */
-class AlfredEnvironmentVariables {
+public class AlfredEnvironmentVariables {
   private let env: [String: String]!
 
   fileprivate init(env: [String: String]) {
     self.env = env
   }
 
-  lazy var prefsDir: URL = URL(fileURLWithPath: env["alfred_preferences"]!)
-  lazy var prefsLocalHash: String = env["alfred_preferences_localhash"]!
-  lazy var themeID: String = env["alfred_theme"]!
-  lazy var workflowID: String = env["alfred_workflow_bundleid"]!
-  lazy var debug: Bool = env["alfred_debug"]! == "1"
+  public lazy var prefsDir: URL =
+    URL(fileURLWithPath: env["alfred_preferences"]!)
+
+  public lazy var prefsLocalHash: String =
+    env["alfred_preferences_localhash"]!
+
+  public lazy var themeID: String =
+    env["alfred_theme"]!
+
+  public lazy var workflowID: String =
+    env["alfred_workflow_bundleid"]!
+
+  public lazy var debug: Bool =
+    env["alfred_debug"]! == "1"
 }
