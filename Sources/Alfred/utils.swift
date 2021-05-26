@@ -36,7 +36,7 @@ func log(
   line: Int = #line
 ) {
   let basename = filename.split(separator: "/").last ?? ""
-  NSLog("[\(basename):\(function):\(line)] \(message)")
+  NSLog("[\(basename):\(line) \(function)] \(message)")
 }
 
 func jsonObj(contentsOf filepath: URL) -> [String: Any]? {
