@@ -21,14 +21,18 @@ extension Alfred {
   }()
 
   static let theme: [String: Any] = {
-    if let themeJson = jsonObj(contentsOf: themePath) {
-      if let theme = themeJson["alfredtheme"] as? [String: Any] {
-        return flattenJsonObj(arraylessJsonObj: theme)
+    if fs.exists(themePath) {
+      if let themeJson = jsonObj(contentsOf: themePath) {
+        if let theme = themeJson["alfredtheme"] as? [String: Any] {
+          return flattenJsonObj(arraylessJsonObj: theme)
+        } else {
+          log("Error: Theme JSON lacks key 'alfredtheme': \(themePath.path)")
+        }
       } else {
-        log("Error: Theme JSON lacks key 'alfredtheme': \(themePath.path)")
+        log("Error: Failed to load theme JSON from: \(themePath.path)")
       }
     } else {
-      log("Error: Failed to load theme JSON from: \(themePath.path)")
+      log("Error: Theme file doesn't exist: \(themePath.path)")
     }
     return [String: Any]()
   }()
