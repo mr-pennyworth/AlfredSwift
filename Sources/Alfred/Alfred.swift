@@ -31,6 +31,19 @@ class Alfred {
     return URL(fileURLWithPath: "/dev/null")
   }()
 
+  static let localPrefsDir: URL = {
+    let localPrefsParent = Alfred.prefsDir/"preferences"/"local"
+    let localPrefsDirs = localPrefsParent.subDirs()
+    if localPrefsDirs.count > 1 {
+      let dirNames = localPrefsDirs.map(\.pathComponents.last!)
+      log("Found multiple local preference dirs: \(dirNames)")
+      log("Using: \(dirNames[0])")
+    } else if localPrefsDirs.count == 0 {
+      log("Error: found no local prefs dir in \(localPrefsParent.path)")
+    }
+    return localPrefsDirs[0]
+  }()
+
   static let isInstalled: Bool = fs.exists(appBundlePath)
 
   static let build: Int =
