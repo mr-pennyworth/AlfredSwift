@@ -21,9 +21,65 @@ final class AlfredTests: XCTestCase {
     XCTAssertEqual(MacTheme(), .Dark)
   }
 
+  func testJsonFlatten() {
+    XCTAssertEqual(
+      flattenJsonObj(
+        arraylessJsonObj: ["a": [ "b": ["c": ["d": 42]]]],
+        keySeparator: "-"
+      ) as NSObject,
+      ["a-b-c-d": 42] as NSObject
+    )
+
+    XCTAssertEqual(
+      flattenJsonObj(
+        arraylessJsonObj: [
+          "a": [
+            "b": 1,
+            "c": "Alfred"
+          ],
+          "d": 4.2
+        ],
+        keySeparator: "."
+      ) as NSObject,
+      [
+        "a.b": 1,
+        "a.c": "Alfred",
+        "d": 4.2
+      ] as NSObject
+    )
+
+    // Arrays should be simply ignored
+    XCTAssertEqual(
+      flattenJsonObj(
+        arraylessJsonObj: [
+          "a": [
+            "b": 1,
+            "c": "Alfred",
+            "e": ["Pennyworth", 42]
+          ],
+          "d": 4.2
+        ],
+        keySeparator: "."
+      ) as NSObject,
+      [
+        "a.b": 1,
+        "a.c": "Alfred",
+        "d": 4.2
+      ] as NSObject
+    )
+
+    XCTAssertEqual(
+      flattenJsonObj(
+        arraylessJsonObj: [String: Any]()
+      ) as NSObject,
+      [String: Any]() as NSObject
+    )
+  }
+
   static var allTests = [
     ("testAlfred", testAlfred),
     ("testAlfredThemeDetector", testAlfredThemeDetector),
     ("testDarkModeDetector", testDarkModeDetector),
+    ("testJsonFlatten", testJsonFlatten),
   ]
 }
