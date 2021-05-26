@@ -4,6 +4,7 @@ class Workflow {
   let dir: URL!
   let dataDir: URL!
   let cacheDir: URL!
+  let name: String!
   private let plist: Plist!
 
   fileprivate init(
@@ -15,6 +16,8 @@ class Workflow {
     let id: String = plist.get("bundleid")!
     dataDir = Alfred.appSupportDir/"Workflow Data"/id
     cacheDir = Alfred.cacheDir/"Workflow Data"/id
+
+    name = plist.get("name")!
 
     self.plist = plist
   }
