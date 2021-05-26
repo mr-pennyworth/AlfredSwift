@@ -35,6 +35,7 @@ class AlfredEnvironmentVariables {
   }
 
   lazy var prefsDir: URL = URL(fileURLWithPath: env["alfred_preferences"]!)
+  lazy var prefsLocalHash: String = env["alfred_preferences_localhash"]!
   lazy var themeID: String = env["alfred_theme"]!
   lazy var workflowID: String = env["alfred_workflow_bundleid"]!
   lazy var debug: Bool = env["alfred_debug"]! == "1"

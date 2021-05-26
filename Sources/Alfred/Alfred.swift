@@ -33,6 +33,10 @@ class Alfred {
 
   static let localPrefsDir: URL = {
     let localPrefsParent = Alfred.prefsDir/"preferences"/"local"
+    if let localHash = envVarsAtInvocation?.prefsLocalHash {
+      return localPrefsParent/localHash
+    }
+    log("Local prefs dir not available from env vars.")
     let localPrefsDirs = localPrefsParent.subDirs()
     if localPrefsDirs.count > 1 {
       let dirNames = localPrefsDirs.map(\.pathComponents.last!)
