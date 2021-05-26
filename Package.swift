@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.2
 
 import PackageDescription
 
@@ -13,11 +13,14 @@ let package = Package(
       targets: ["Alfred"]),
   ],
   dependencies: [
+    .package(
+      url: "https://github.com/NozeIO/MicroExpress",
+      .upToNextMinor(from: "0.5.3")),
   ],
   targets: [
     .target(
       name: "Alfred",
-      dependencies: []),
+      dependencies: ["MicroExpress"]),
     .testTarget(
       name: "AlfredTests",
       dependencies: ["Alfred"]),
