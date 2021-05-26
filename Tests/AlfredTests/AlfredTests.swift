@@ -13,12 +13,17 @@ final class AlfredTests: XCTestCase {
     )
   }
 
+  func testAlfredThemeDetector() {
+    XCTAssertEqual(Alfred.themeID.split(separator: ".")[0], "theme")
+  }
+
   func testDarkModeDetector() {
     XCTAssertEqual(MacTheme(), .Dark)
   }
 
   static var allTests = [
     ("testAlfred", testAlfred),
+    ("testAlfredThemeDetector", testAlfredThemeDetector),
     ("testDarkModeDetector", testDarkModeDetector),
   ]
 }
