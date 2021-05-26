@@ -4,7 +4,7 @@ class Alfred {
   private static let fs: FileManager = FileManager.default
   private static let home: URL = fs.homeDirectoryForCurrentUser
 
-  private static let appBundlePath: URL =
+  static let appBundlePath: URL =
     URL(fileURLWithPath: "/Applications/Alfred 4.app")
 
   private static let alfredPlist: Plist =
