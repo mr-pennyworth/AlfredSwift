@@ -13,7 +13,12 @@ final class AlfredTests: XCTestCase {
     )
   }
 
+  func testDarkModeDetector() {
+    XCTAssertEqual(MacTheme(), .Dark)
+  }
+
   static var allTests = [
     ("testAlfred", testAlfred),
+    ("testDarkModeDetector", testDarkModeDetector),
   ]
 }
