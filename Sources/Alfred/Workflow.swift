@@ -14,8 +14,8 @@ public class Workflow {
     dir = wfDir
 
     let id: String = plist.get("bundleid")!
-    dataDir = Alfred.appSupportDir/"Workflow Data"/id
-    cacheDir = Alfred.cacheDir/"Workflow Data"/id
+    dataDir = mkdIfNotPresent(Alfred.appSupportDir/"Workflow Data"/id)
+    cacheDir = mkdIfNotPresent(Alfred.cacheDir/"Workflow Data"/id)
 
     name = plist.get("name")!
 
@@ -47,4 +47,12 @@ public extension Alfred {
   static func workflow(id: String) -> Workflow? {
     id2wf[id]
   }
+}
+
+fileprivate func mkdIfNotPresent(_ url: URL) -> URL {
+  let fs = FileManager.default
+  if !fs.exists(url) {
+    try? fs.createDirectory(at: url, withIntermediateDirectories: true)
+  }
+  return url
 }
