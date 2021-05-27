@@ -4,6 +4,13 @@ public protocol ScriptFilter {
   func respond(to query: [String: String]) -> ScriptFilterResponse
 }
 
+public protocol AsyncScriptFilter {
+  func process(
+    query: [String: String],
+    then: (ScriptFilterResponse) -> ()
+  )
+}
+
 /// Alfred's script filter response [JSON spec][1]
 /// [1]: https://www.alfredapp.com/help/workflows/inputs/script-filter/json/
 public struct ScriptFilterResponse: Codable {

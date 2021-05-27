@@ -140,25 +140,40 @@ final class AlfredTests: XCTestCase {
   }
 
   func testScriptFilterServer() {
-    class Handler: ScriptFilter {
+    class SyncHandler: ScriptFilter {
       func respond(to query: [String: String]) -> ScriptFilterResponse {
         AlfredTests.scriptFilterResponse
       }
     }
 
-    let port = 9933
-    let server = ScriptFilterServer(port: port, handler: Handler())
-    server.start()
+    class AsyncHandler: AsyncScriptFilter {
+      func process(
+        query: [String: String],
+        then: (ScriptFilterResponse) -> ()
+      ) {
+        then(AlfredTests.scriptFilterResponse)
+      }
+    }
 
-    let respData = fetch("http://localhost:\(port)")
-    let received = try! JSONDecoder().decode(
-      ScriptFilterResponse.self,
-      from: respData
-    )
-    XCTAssertEqual(
-      AlfredTests.scriptFilterResponse.asJsonStr(),
-      received.asJsonStr()
-    )
+    let port = 9933
+    let handlers: [ScriptFilterHandler] = [
+      .from(SyncHandler()),
+      .from(AsyncHandler())
+    ]
+    for handler in handlers {
+      let server = ScriptFilterServer(port: port, handler: handler)
+      server.start()
+
+      let respData = fetch("http://localhost:\(port)")
+      let received = try! JSONDecoder().decode(
+        ScriptFilterResponse.self,
+        from: respData
+      )
+      XCTAssertEqual(
+        AlfredTests.scriptFilterResponse.asJsonStr(),
+        received.asJsonStr()
+      )
+    }
   }
 
   static var allTests = [

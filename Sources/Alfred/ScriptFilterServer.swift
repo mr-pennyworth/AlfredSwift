@@ -1,10 +1,23 @@
 import Foundation
 import MicroExpress
 
+public enum ScriptFilterHandler {
+  case sync(([String: String]) -> ScriptFilterResponse)
+  case async(([String: String], (ScriptFilterResponse) -> ()) -> ())
+
+  public static func from(_ f: ScriptFilter) -> ScriptFilterHandler {
+    sync(f.respond)
+  }
+
+  public static func from(_ f: AsyncScriptFilter) -> ScriptFilterHandler {
+    async(f.process)
+  }
+}
+
 public class ScriptFilterServer {
   private let port: Int
-  private let handler: ScriptFilter
-  public init(port: Int, handler: ScriptFilter) {
+  private let handler: ScriptFilterHandler
+  public init(port: Int, handler: ScriptFilterHandler) {
     self.port = port
     self.handler = handler
   }
@@ -16,9 +29,15 @@ public class ScriptFilterServer {
       let query = req.queryParams()
       log("Query from alfred: \(query)")
 
-      let response = self.handler.respond(to: query)
-      res.json(response)
-      log("Responded to alfred: \(response)")
+      func respond<T: Encodable>(with response: T) {
+        res.json(response)
+        log("Responded to alfred: \(response)")
+      }
+
+      switch self.handler {
+      case let .sync(syncFunc): respond(with: syncFunc(query))
+      case let .async(asyncFunc): asyncFunc(query, { respond(with: $0) })
+      }
     }
 
     DispatchQueue.global(qos: .utility).async {
