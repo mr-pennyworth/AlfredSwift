@@ -3,7 +3,7 @@ import MicroExpress
 
 public enum ScriptFilterHandler {
   case sync(([String: String]) -> ScriptFilterResponse)
-  case async(([String: String], (ScriptFilterResponse) -> ()) -> ())
+  case async(([String: String], @escaping (ScriptFilterResponse) -> ()) -> ())
 
   public static func from(_ f: ScriptFilter) -> ScriptFilterHandler {
     sync(f.respond)

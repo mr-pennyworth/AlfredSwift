@@ -7,7 +7,7 @@ public protocol ScriptFilter {
 public protocol AsyncScriptFilter {
   func process(
     query: [String: String],
-    then: (ScriptFilterResponse) -> ()
+    then: @escaping (ScriptFilterResponse) -> ()
   )
 }
 
