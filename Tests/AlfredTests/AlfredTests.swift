@@ -79,11 +79,10 @@ final class AlfredTests: XCTestCase {
     )
   }
 
-  func testScriptFilterResponse() {
-    var scriptFilterResponse = ScriptFilterResponse()
-
+  static let scriptFilterResponse: ScriptFilterResponse = {
+    var resp = ScriptFilterResponse()
     let foobar = URL(fileURLWithPath: "/tmp/foobar")
-    scriptFilterResponse.items.append(.item(
+    resp.items.append(.item(
       arg: "arg",
       title: "title",
       quicklookurl: URL(string: "http://google.com"),
@@ -99,7 +98,13 @@ final class AlfredTests: XCTestCase {
         )
       )
     ))
-    let producedJson = scriptFilterResponse.asJsonStr(sortKeys: true)
+    return resp
+  }()
+
+  func testScriptFilterResponse() {
+    let producedJson =
+      AlfredTests.scriptFilterResponse.asJsonStr(sortKeys: true)
+
     let expectedJson =
       """
       {
@@ -134,6 +139,28 @@ final class AlfredTests: XCTestCase {
     XCTAssertEqual(producedJson, expectedJson)
   }
 
+  func testScriptFilterServer() {
+    class Handler: ScriptFilter {
+      func respond(to query: [String: String]) -> ScriptFilterResponse {
+        AlfredTests.scriptFilterResponse
+      }
+    }
+
+    let port = 9933
+    let server = ScriptFilterServer(port: port, handler: Handler())
+    server.start()
+
+    let respData = fetch("http://localhost:\(port)")
+    let received = try! JSONDecoder().decode(
+      ScriptFilterResponse.self,
+      from: respData
+    )
+    XCTAssertEqual(
+      AlfredTests.scriptFilterResponse.asJsonStr(),
+      received.asJsonStr()
+    )
+  }
+
   static var allTests = [
     ("testAlfred", testAlfred),
     ("testAlfredThemeDetector", testAlfredThemeDetector),
@@ -141,4 +168,53 @@ final class AlfredTests: XCTestCase {
     ("testJsonFlatten", testJsonFlatten),
     ("testScriptFilterResponse", testScriptFilterResponse),
   ]
+}
+
+func fetch(_ url: String) -> Data {
+  var req = URLRequest(url: URL(string: url)!)
+  req.httpMethod = "GET"
+
+  let (data, _, _) = URLSession.shared.syncRequest(with: req)
+  return data!
+}
+
+// https://stackoverflow.com/a/67347651
+extension URLSession {
+  func syncRequest(with url: URL) -> (Data?, URLResponse?, Error?) {
+    var data: Data?
+    var response: URLResponse?
+    var error: Error?
+
+    let dispatchGroup = DispatchGroup()
+    let task = dataTask(with: url) {
+      data = $0
+      response = $1
+      error = $2
+      dispatchGroup.leave()
+    }
+    dispatchGroup.enter()
+    task.resume()
+    dispatchGroup.wait()
+
+    return (data, response, error)
+  }
+
+  func syncRequest(with request: URLRequest) -> (Data?, URLResponse?, Error?) {
+    var data: Data?
+    var response: URLResponse?
+    var error: Error?
+
+    let dispatchGroup = DispatchGroup()
+    let task = dataTask(with: request) {
+      data = $0
+      response = $1
+      error = $2
+      dispatchGroup.leave()
+    }
+    dispatchGroup.enter()
+    task.resume()
+    dispatchGroup.wait()
+
+    return (data, response, error)
+  }
 }
