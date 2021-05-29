@@ -10,7 +10,7 @@ public class Alfred {
   private static let alfredPlist: Plist =
     Plist(path: appBundlePath/"Contents"/"Info.plist")
 
-  private static let bundleID: String = alfredPlist.get(
+  static let bundleID: String = alfredPlist.get(
     "CFBundleIdentifier",
     orElse: "com.runningwithcrayons.Alfred"
   )
@@ -57,11 +57,4 @@ public class Alfred {
     "CFBundleShortVersionString",
     orElse: "0.0.0"
   ))!
-
-  // Press Secretary in Alfred posts NSNotifications
-  // containing currently selected item in Alfred.
-  // reference: https://bit.ly/3hXHOXD
-  private static let minPressSecretaryBuild: Int = 1203
-
-  public static let hasPressSecretary: Bool = build >= minPressSecretaryBuild
 }

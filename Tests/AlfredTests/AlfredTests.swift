@@ -9,7 +9,6 @@ final class AlfredTests: XCTestCase {
     XCTAssertEqual(Alfred.isInstalled, true)
     XCTAssertEqual(Alfred.version > Semver("4.0.0"), true)
     XCTAssertEqual(Alfred.version < Semver("5.0.0"), true)
-    XCTAssertEqual(Alfred.hasPressSecretary, true)
     XCTAssertEqual(
       Alfred.prefsDir.pathComponents.last!,
       "Alfred.alfredpreferences"
@@ -77,6 +76,11 @@ final class AlfredTests: XCTestCase {
       ) as NSObject,
       [String: Any]() as NSObject
     )
+  }
+
+  func testPressSecretary() {
+    XCTAssertEqual(PressSecretary.isSupported, true)
+    XCTAssertEqual(PressSecretary.isEnabled(), true)
   }
 
   static let scriptFilterResponse: ScriptFilterResponse = {
@@ -155,14 +159,14 @@ final class AlfredTests: XCTestCase {
       }
     }
 
-    let port = 9933
-    let handlers: [ScriptFilterHandler] = [
-      .from(SyncHandler()),
-      .from(AsyncHandler())
+    let handlers: [(ScriptFilterHandler, Int)] = [
+      (.from(SyncHandler()), 9339),
+      (.from(AsyncHandler()), 9449)
     ]
-    for handler in handlers {
+    for (handler, port) in handlers {
       let server = ScriptFilterServer(port: port, handler: handler)
       server.start()
+      sleep(1)
 
       let respData = fetch("http://localhost:\(port)")
       let received = try! JSONDecoder().decode(
@@ -181,6 +185,7 @@ final class AlfredTests: XCTestCase {
     ("testAlfredThemeDetector", testAlfredThemeDetector),
     ("testDarkModeDetector", testDarkModeDetector),
     ("testJsonFlatten", testJsonFlatten),
+    ("testPressSecretary", testPressSecretary),
     ("testScriptFilterResponse", testScriptFilterResponse),
   ]
 }
@@ -195,25 +200,6 @@ func fetch(_ url: String) -> Data {
 
 // https://stackoverflow.com/a/67347651
 extension URLSession {
-  func syncRequest(with url: URL) -> (Data?, URLResponse?, Error?) {
-    var data: Data?
-    var response: URLResponse?
-    var error: Error?
-
-    let dispatchGroup = DispatchGroup()
-    let task = dataTask(with: url) {
-      data = $0
-      response = $1
-      error = $2
-      dispatchGroup.leave()
-    }
-    dispatchGroup.enter()
-    task.resume()
-    dispatchGroup.wait()
-
-    return (data, response, error)
-  }
-
   func syncRequest(with request: URLRequest) -> (Data?, URLResponse?, Error?) {
     var data: Data?
     var response: URLResponse?
