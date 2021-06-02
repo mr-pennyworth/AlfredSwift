@@ -142,15 +142,21 @@ public struct ScriptFilterResponse: Codable {
     public var mods: Mods?
 
     public struct Mods: Codable {
-      public var cmd: Mod?
       public var alt: Mod?
+      public var cmd: Mod?
+      public var control: Mod?
+      public var shift: Mod?
       public static func mods(
+        alt: Mod? = nil,
         cmd: Mod? = nil,
-        alt: Mod? = nil
+        control: Mod? = nil,
+        shift: Mod? = nil
       ) -> Mods {
         var m = Mods()
-        m.cmd = cmd
         m.alt = alt
+        m.cmd = cmd
+        m.control = control
+        m.shift = shift
         return m
       }
     }

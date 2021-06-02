@@ -93,12 +93,12 @@ final class AlfredTests: XCTestCase {
       type: .fileSkipCheck,
       icon: .forFileType(uti: "public.folder"),
       mods: .mods(
-        cmd: .mod(
-          icon: .ofFile(at: foobar)
-        ),
         alt: .mod(
           valid: true,
           icon: .fromImage(at: foobar)
+        ),
+        cmd: .mod(
+          icon: .ofFile(at: foobar)
         )
       )
     ))
