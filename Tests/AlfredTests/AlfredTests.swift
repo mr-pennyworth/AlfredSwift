@@ -81,6 +81,17 @@ final class AlfredTests: XCTestCase {
   func testPressSecretary() {
     XCTAssertEqual(PressSecretary.isSupported, true)
     XCTAssertEqual(PressSecretary.isEnabled(), true)
+    Alfred.onFrameChange { newFrame in
+      log("\(newFrame)")
+    }
+    Alfred.onHide {
+      log("hidden")
+    }
+    Alfred.onItemSelect { selectedItem in
+      log("\(selectedItem)")
+    }
+    // To see the above in action, uncomment the line below:
+    // exec("/bin/sleep", "60")
   }
 
   static let scriptFilterResponse: ScriptFilterResponse = {

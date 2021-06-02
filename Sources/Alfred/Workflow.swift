@@ -7,6 +7,8 @@ public class Workflow {
   public let name: String!
   private let plist: Plist!
 
+  public var uid: String { get { dir.lastPathComponent } }
+
   fileprivate init(
     plist: Plist,
     wfDir: URL
