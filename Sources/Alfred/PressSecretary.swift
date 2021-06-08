@@ -126,7 +126,7 @@ public extension Alfred {
         log("Raw Alfred selection: \(selection)")
         var qlURL: URL? = nil
         if let url = selection["quicklookurl"] as? String {
-          qlURL = URL(string: url)
+          qlURL = URL(string: url) ?? URL(fileURLWithPath: url)
         }
         var uid: String? = nil
         if let resultuid = selection["resultuid"] as? String {
