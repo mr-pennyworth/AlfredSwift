@@ -46,6 +46,10 @@ public extension Alfred {
     return dict
   }()
 
+  static func workflows() -> [Workflow] {
+    Array(id2wf.values)
+  }
+
   static func workflow(id: String) -> Workflow? {
     id2wf[id]
   }
