@@ -191,6 +191,15 @@ final class AlfredTests: XCTestCase {
     }
   }
 
+  func testWorkflow() {
+    let emojiWf = Alfred.workflow(id: "mr.pennyworth.fastEmoji")!
+    XCTAssertEqual(emojiWf.author, "Mr. Pennyworth")
+    XCTAssertEqual(
+      emojiWf.description,
+      "Search emoji with related keywords, instantly."
+    )
+  }
+
   static var allTests = [
     ("testAlfred", testAlfred),
     ("testAlfredThemeDetector", testAlfredThemeDetector),
@@ -198,6 +207,7 @@ final class AlfredTests: XCTestCase {
     ("testJsonFlatten", testJsonFlatten),
     ("testPressSecretary", testPressSecretary),
     ("testScriptFilterResponse", testScriptFilterResponse),
+    ("testWorkflow", testWorkflow),
   ]
 }
 

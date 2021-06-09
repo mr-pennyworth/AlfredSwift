@@ -5,6 +5,8 @@ public class Workflow {
   public let dataDir: URL!
   public let cacheDir: URL!
   public let name: String!
+  public let author: String?
+  public let description: String?
   private let plist: Plist!
 
   public var uid: String { get { dir.lastPathComponent } }
@@ -20,6 +22,8 @@ public class Workflow {
     cacheDir = mkdIfNotPresent(Alfred.cacheDir/"Workflow Data"/id)
 
     name = plist.get("name")!
+    author = plist.get("createdby")
+    description = plist.get("description")
 
     self.plist = plist
   }
