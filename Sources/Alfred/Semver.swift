@@ -108,19 +108,21 @@ extension Semver: Codable {
 
 extension Semver: LosslessStringConvertible {
 
-  private static let semverRegexPattern = #"^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([\da-zA-Z\-]+(?:\.[\da-zA-Z\-]+)*))?$"#
-  private static let semverRegex = try! NSRegularExpression(pattern: semverRegexPattern)
-
   public init?(_ description:String) {
-    guard let match = Semver.semverRegex.firstMatch(in: description) else {
+    var versions = description.split(
+      separator: ".",
+      omittingEmptySubsequences: false
+    )
+    if versions.count > 3 || versions.count < 1 { return nil }
+    if versions.count == 1 { versions += ["0", "0"] }
+    if versions.count == 2 { versions += ["0"] }
+
+    guard let major = Int(versions[0]),
+          let minor = Int(versions[1]),
+          let patch = Int(versions[2]) else {
       return nil
     }
-    guard let major = Int(description[match.range(at: 1)]!),
-          let minor = Int(description[match.range(at: 2)]!),
-          let patch = Int(description[match.range(at: 3)]!) else {
-      // version number too large
-      return nil
-    }
+
     self.major = major
     self.minor = minor
     self.patch = patch
@@ -181,18 +183,5 @@ private extension String {
       return nil
     }
     return String(self[r])
-  }
-}
-
-private extension NSRegularExpression {
-
-  func matches(in string: String, options: NSRegularExpression.MatchingOptions = []) -> [NSTextCheckingResult] {
-    let r = NSRange(string.startIndex..<string.endIndex, in: string)
-    return matches(in: string, options: options, range: r)
-  }
-
-  func firstMatch(in string: String, options: NSRegularExpression.MatchingOptions = []) -> NSTextCheckingResult? {
-    let r = NSRange(string.startIndex..<string.endIndex, in: string)
-    return firstMatch(in: string, options: options, range: r)
   }
 }

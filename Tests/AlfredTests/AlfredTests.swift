@@ -191,6 +191,24 @@ final class AlfredTests: XCTestCase {
     }
   }
 
+  func testSemver() {
+    func valid(_ versionString: String) {
+      XCTAssertEqual(Semver(versionString) == nil, false)
+    }
+    func invalid(_ versionString: String) {
+      XCTAssertEqual(Semver(versionString), nil)
+    }
+
+    valid("4")
+    valid("4.5")
+    valid("4.5.1")
+
+    invalid("")
+    invalid("4..5")
+    invalid("4.5.9.8")
+    invalid("4.hello.world")
+  }
+
   func testWorkflow() {
     let emojiWf = Alfred.workflow(id: "mr.pennyworth.fastEmoji")!
     XCTAssertEqual(emojiWf.author, "Mr. Pennyworth")
@@ -207,6 +225,7 @@ final class AlfredTests: XCTestCase {
     ("testJsonFlatten", testJsonFlatten),
     ("testPressSecretary", testPressSecretary),
     ("testScriptFilterResponse", testScriptFilterResponse),
+    ("testSemver", testSemver),
     ("testWorkflow", testWorkflow),
   ]
 }
