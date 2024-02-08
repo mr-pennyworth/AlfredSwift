@@ -185,8 +185,8 @@ final class AlfredTests: XCTestCase {
         from: respData
       )
       XCTAssertEqual(
-        AlfredTests.scriptFilterResponse.asJsonStr(),
-        received.asJsonStr()
+        AlfredTests.scriptFilterResponse.asJsonStr(sortKeys: true),
+        received.asJsonStr(sortKeys: true)
       )
     }
   }
