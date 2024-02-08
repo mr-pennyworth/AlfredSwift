@@ -55,7 +55,7 @@ struct PressSecretary {
 }
 
 public extension Alfred {
-  struct SelectedItem: Codable {
+  struct SelectedItem: Codable, Equatable {
     public let title: String?
     public let subtext: String?
     public let quicklookurl: URL?
@@ -100,6 +100,39 @@ public extension Alfred {
     selectHandlers.append(callback)
   }
 
+  static func parse(url: String) -> URL? {
+    if url.starts(with: "https://")
+        || url.starts(with: "http://")
+        || url.starts(with: "file://") {
+      return URL(string: url)
+    } else if url.starts(with: "/") {
+      return URL(fileURLWithPath: url)
+    }
+    return nil
+  }
+
+  static func parse(selection: [String: Any]) -> SelectedItem {
+    log("Raw Alfred selection: \(selection)")
+    var qlURL: URL? = nil
+    if let url = selection["quicklookurl"] as? String {
+      qlURL = parse(url: url)
+    }
+    var uid: String? = nil
+    if let resultuid = selection["resultuid"] as? String {
+      uid =
+      resultuid
+        .split(separator: ".", omittingEmptySubsequences: false)
+        .dropFirst().joined(separator: ".")
+    }
+    return SelectedItem(
+      title: selection["title"] as? String,
+      subtext: selection["subtext"] as? String,
+      quicklookurl: qlURL,
+      workflowuid: selection["workflowuid"] as? String,
+      uid: uid
+    )
+  }
+
   @objc private static func handleAlfredNotification(
     notification: NSNotification
   ) {
@@ -123,28 +156,8 @@ public extension Alfred {
 
     if ["selection.changed", "context.changed"].contains(notifType) {
       if let selection = notif["selection"] as? [String: Any] {
-        log("Raw Alfred selection: \(selection)")
-        var qlURL: URL? = nil
-        if let url = selection["quicklookurl"] as? String {
-          qlURL = URL(string: url) ?? URL(fileURLWithPath: url)
-        }
-        var uid: String? = nil
-        if let resultuid = selection["resultuid"] as? String {
-          uid =
-            resultuid
-              .split(separator: ".", omittingEmptySubsequences: false)
-              .dropFirst().joined(separator: ".")
-        }
-        let selectedItem = SelectedItem(
-          title: selection["title"] as? String,
-          subtext: selection["subtext"] as? String,
-          quicklookurl: qlURL,
-          workflowuid: selection["workflowuid"] as? String,
-          uid: uid
-        )
-        log("Parsed Alfred selection: \(selectedItem)")
         for handler in selectHandlers {
-          handler(selectedItem)
+          handler(parse(selection: selection))
         }
       }
     }
