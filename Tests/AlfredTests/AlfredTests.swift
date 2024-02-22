@@ -6,9 +6,9 @@ import XCTest
 
 final class AlfredTests: XCTestCase {
   func testAlfred() {
-    XCTAssertEqual(Alfred.isInstalled, true)
-    XCTAssertEqual(Alfred.version > Semver("4.0.0"), true)
-    XCTAssertEqual(Alfred.version < Semver("5.0.0"), true)
+    XCTAssert(Alfred.isInstalled)
+    XCTAssertGreaterThan(Alfred.version, Semver("4.0.0"))
+    XCTAssertLessThan(Alfred.version, Semver("6.0.0"))
     XCTAssertEqual(
       Alfred.prefsDir.pathComponents.last!,
       "Alfred.alfredpreferences"

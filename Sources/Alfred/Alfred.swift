@@ -5,7 +5,11 @@ public class Alfred {
   private static let home: URL = fs.homeDirectoryForCurrentUser
 
   static let appBundlePath: URL =
-    URL(fileURLWithPath: "/Applications/Alfred 4.app")
+    if fs.fileExists(atPath: "/Applications/Alfred 5.app") {
+      URL(fileURLWithPath: "/Applications/Alfred 5.app")
+    } else {
+      URL(fileURLWithPath: "/Applications/Alfred 4.app")
+    }
 
   private static let alfredPlist: Plist =
     Plist(path: appBundlePath/"Contents"/"Info.plist")
