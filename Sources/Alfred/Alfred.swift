@@ -4,11 +4,11 @@ public class Alfred {
   private static let fs: FileManager = FileManager.default
   private static let home: URL = fs.homeDirectoryForCurrentUser
 
-  static let appBundlePath: URL =
+  static let appBundlePath: URL
     if fs.fileExists(atPath: "/Applications/Alfred 5.app") {
-      URL(fileURLWithPath: "/Applications/Alfred 5.app")
+      appBundlePath = URL(fileURLWithPath: "/Applications/Alfred 5.app")
     } else {
-      URL(fileURLWithPath: "/Applications/Alfred 4.app")
+      appBundlePath = URL(fileURLWithPath: "/Applications/Alfred 4.app")
     }
 
   private static let alfredPlist: Plist =
