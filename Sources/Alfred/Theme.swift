@@ -1,5 +1,25 @@
 import Foundation
 
+
+// Alfred's theme editor gives four translucency options
+// for Alfred's window:
+// 1. No Blur
+// 2. Visual Effect Light
+// 3. Visual Effect Dark
+// 4. Classic Blur (Deprecated)
+//
+// The four choices above are encoded in the theme's JSON
+// as:
+// 1. visualEffectMode: null, window.blur: 0
+// 2. visualEffectMode: 1,    window.blur: 0
+// 3. visualEffectMode: 2,    window.blur: 0
+// 4. visualEffectMode: null, window.blur: int in [0, 40]
+public enum VisualEffect: Equatable {
+  case classicBlur(blur: Int)
+  case light
+  case dark
+}
+
 public extension Alfred {
   private static let fs = FileManager.default
 
@@ -54,7 +74,16 @@ public extension Alfred {
       \(theme.map(kv2cssLine).joined(separator: "\n  "))
     }
     """
-
+ 
+  static let visualEffect: VisualEffect = {
+    switch (theme["visualEffectMode"] as? Int) ?? 0 {
+    case 0: .classicBlur(blur: (theme["window-blur"] as? Int) ?? 0)
+    case 1: .light
+    case 2: .dark
+    default: .classicBlur(blur: 0)
+    }
+  }()
+  
   private static func kv2cssLine(key: String, value: Any) -> String {
     switch value {
     case let num as Int:
