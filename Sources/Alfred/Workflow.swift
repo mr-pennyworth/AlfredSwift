@@ -1,6 +1,7 @@
 import Foundation
 
 public class Workflow {
+  public let id: String!
   public let dir: URL!
   public let dataDir: URL!
   public let cacheDir: URL!
@@ -17,7 +18,7 @@ public class Workflow {
   ) {
     dir = wfDir
 
-    let id: String = plist.get("bundleid")!
+    id = plist.get("bundleid")!
     dataDir = mkdIfNotPresent(Alfred.appSupportDir/"Workflow Data"/id)
     cacheDir = mkdIfNotPresent(Alfred.cacheDir/"Workflow Data"/id)
 
