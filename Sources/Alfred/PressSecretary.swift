@@ -100,22 +100,26 @@ public extension Alfred {
     selectHandlers.append(callback)
   }
 
-  static func parse(url: String) -> URL? {
-    if url.starts(with: "https://")
-        || url.starts(with: "http://")
-        || url.starts(with: "file://") {
-      return URL(string: url)
-    } else if url.starts(with: "/") {
-      return URL(fileURLWithPath: url)
+  static func parse(url: String, wfdir: URL?) -> URL? {
+    if let urlWithScheme = URL(string: url) {
+      if urlWithScheme.scheme != nil {
+        return urlWithScheme
+      }
     }
-    return nil
+    return URL(fileURLWithPath: url, relativeTo: wfdir).absoluteURL
   }
 
   static func parse(selection: [String: Any]) -> SelectedItem {
     log("Raw Alfred selection: \(selection)")
+    var workflowUID: String? = nil
+    var wfDir: URL? = nil
+    if let wfUID = selection["workflowuid"] as? String {
+      workflowUID = wfUID
+      wfDir = Alfred.workflows().first(where: { $0.uid == wfUID })?.dir
+    }
     var qlURL: URL? = nil
     if let url = selection["quicklookurl"] as? String {
-      qlURL = parse(url: url)
+      qlURL = parse(url: url, wfdir: wfDir)
     }
     var uid: String? = nil
     if let resultuid = selection["resultuid"] as? String {
@@ -128,7 +132,7 @@ public extension Alfred {
       title: selection["title"] as? String,
       subtext: selection["subtext"] as? String,
       quicklookurl: qlURL,
-      workflowuid: selection["workflowuid"] as? String,
+      workflowuid: workflowUID,
       uid: uid
     )
   }

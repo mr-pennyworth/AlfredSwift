@@ -96,25 +96,37 @@ final class AlfredTests: XCTestCase {
 
   func testParseSelectionQuicklookURL() {
     func parse(url: String) -> URL {
-      return Alfred.parse(url: url)!
+      return Alfred.parse(url: url, wfdir: URL(fileURLWithPath: "/tmp"))!
     }
 
-    XCTAssertFalse(parse(url: "https://google.com").isFileURL)
     XCTAssertEqual(
-      parse(url: "https://google.com").scheme,
-      "https"
+      parse(url: "https://google.com").absoluteString,
+      "https://google.com"
     )
 
-    XCTAssertTrue(parse(url: "/tmp/foo/bar").isFileURL)
     XCTAssertEqual(
-      parse(url: "/tmp/foo/bar").scheme,
-      "file"
+      parse(url: "/tmp/foo/bar").absoluteString,
+      "file:///tmp/foo/bar"
     )
 
-    XCTAssertTrue(parse(url: "file:///tmp/foo/bar").isFileURL)
     XCTAssertEqual(
-      parse(url: "file:///tmp/foo/bar").scheme,
-      "file"
+      parse(url: "foo/bar").absoluteString,
+      "file:///tmp/foo/bar"
+    )
+
+    XCTAssertEqual(
+      parse(url: "file:///tmp/foo/bar").absoluteString,
+      "file:///tmp/foo/bar"
+    )
+
+    XCTAssertEqual(
+      parse(url: "foo/bar").absoluteString,
+      "file:///tmp/foo/bar"
+    )
+
+    XCTAssertEqual(
+      parse(url: "./foo/bar").absoluteString,
+      "file:///tmp/foo/bar"
     )
   }
 
