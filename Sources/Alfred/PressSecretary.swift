@@ -67,6 +67,7 @@ public extension Alfred {
   private static var frameChangeHandlers: [(NSRect) -> ()] = []
   private static var hideHandlers: [() -> ()] = []
   private static var selectHandlers: [(SelectedItem) -> ()] = []
+  private static var actionsViewHandlers: [() -> ()] = []
 
   private static func addNotifObserver() {
     if !notificationObserverAdded {
@@ -98,6 +99,12 @@ public extension Alfred {
   static func onItemSelect(callback: @escaping (SelectedItem) -> ()) {
     addNotifObserver()
     selectHandlers.append(callback)
+  }
+
+  /// Callback for whenever Alfred UI enters into "actions" view
+  static func inActionsView(callback: @escaping () -> ()) {
+    addNotifObserver()
+    actionsViewHandlers.append(callback)
   }
 
   static func parse(url: String, wfdir: URL?) -> URL? {
@@ -163,6 +170,12 @@ public extension Alfred {
         for handler in selectHandlers {
           handler(parse(selection: selection))
         }
+      }
+    }
+
+    if notif["view"] as? String == "actions" {
+      for handler in actionsViewHandlers {
+        handler()
       }
     }
   }

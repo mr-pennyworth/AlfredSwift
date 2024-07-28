@@ -90,6 +90,9 @@ final class AlfredTests: XCTestCase {
     Alfred.onItemSelect { selectedItem in
       log("\(selectedItem)")
     }
+    Alfred.inActionsView {
+      log("Alfred's showing 'actions' view")
+    }
     // To see the above in action, uncomment the line below:
     // exec("/bin/sleep", "60")
   }
