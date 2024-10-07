@@ -37,9 +37,20 @@ public class Alfred {
 
   public static let localPrefsDir: URL = {
     let localPrefsParent = Alfred.prefsDir/"preferences"/"local"
+
+    // Alfred 5.5.1 has started including the localhash in prefs.json
+    let prefsJsonPath = appSupportDir/"prefs.json"
+    if let dict = jsonObj(contentsOf: prefsJsonPath) {
+      if let localHash = dict["localhash"] as? String {
+        return localPrefsParent/localHash
+      }
+    }
+
+    // Fall back to the env var for older versions of Alfred.
     if let localHash = envVarsAtInvocation?.prefsLocalHash {
       return localPrefsParent/localHash
     }
+
     log("Local prefs dir not available from env vars.")
     let localPrefsDirs = localPrefsParent.subDirs()
     if localPrefsDirs.count > 1 {
