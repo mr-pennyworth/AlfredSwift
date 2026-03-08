@@ -4,12 +4,18 @@ public class Alfred {
   private static let fs: FileManager = FileManager.default
   private static let home: URL = fs.homeDirectoryForCurrentUser
 
-  static let appBundlePath: URL =
-    if fs.fileExists(atPath: "/Applications/Alfred 5.app") {
-      URL(fileURLWithPath: "/Applications/Alfred 5.app")
-    } else {
-      URL(fileURLWithPath: "/Applications/Alfred 4.app")
+  static let appBundlePath: URL = {
+    let candidatePaths = [
+      "/Applications/Alfred 5.app",
+      "\(home.path)/Applications/Alfred 5.app",
+      "/Applications/Alfred 4.app",
+      "\(home.path)/Applications/Alfred 4.app",
+    ]
+    if let appPath = candidatePaths.first(where: fs.fileExists(atPath:)) {
+      return URL(fileURLWithPath: appPath)
     }
+    return URL(fileURLWithPath: "/Applications/Alfred 5.app")
+  }()
 
   private static let alfredPlist: Plist =
     Plist(path: appBundlePath/"Contents"/"Info.plist")
