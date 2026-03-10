@@ -32,8 +32,9 @@ public class Workflow {
 
 public extension Alfred {
   private static let fs: FileManager = FileManager.default
+  private static let workflowCacheLock = NSLock()
 
-  private static var id2wf: [String: Workflow] = {
+  private static func buildWorkflowMap() -> [String: Workflow] {
     var dict = [String: Workflow]()
     for wfDir in (prefsDir/"workflows").subDirs() {
       let plPath = wfDir/"info.plist"
@@ -49,14 +50,27 @@ public extension Alfred {
       }
     }
     return dict
-  }()
-
-  static func workflows() -> [Workflow] {
-    Array(id2wf.values)
   }
 
-  static func workflow(id: String) -> Workflow? {
-    id2wf[id]
+  private static var id2wf: [String: Workflow] = buildWorkflowMap()
+
+  private static func refreshWorkflowCacheIfNeeded(forceRefresh: Bool) {
+    guard forceRefresh else { return }
+    id2wf = buildWorkflowMap()
+  }
+
+  static func workflows(forceRefresh: Bool = false) -> [Workflow] {
+    workflowCacheLock.lock()
+    defer { workflowCacheLock.unlock() }
+    refreshWorkflowCacheIfNeeded(forceRefresh: forceRefresh)
+    return Array(id2wf.values)
+  }
+
+  static func workflow(id: String, forceRefresh: Bool = false) -> Workflow? {
+    workflowCacheLock.lock()
+    defer { workflowCacheLock.unlock() }
+    refreshWorkflowCacheIfNeeded(forceRefresh: forceRefresh)
+    return id2wf[id]
   }
 }
 
